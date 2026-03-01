@@ -3,16 +3,13 @@ import { APIEvent } from "@solidjs/start/server";
 import { json } from "@solidjs/router";
 import { getOAuthClient, SCOPE } from "~/auth/client";
 
-export async function POST({request}: APIEvent) {
+export async function POST({ request }: APIEvent) {
   try {
     const { handle } = await request.json();
-    console.log('request', handle);
+    console.log("request", handle);
 
     if (!handle || typeof handle !== "string") {
-      return json(
-        { error: "Handle is required" },
-        { status: 400 }
-      );
+      return json({ error: "Handle is required" }, { status: 400 });
     }
 
     const client = await getOAuthClient();
@@ -20,14 +17,14 @@ export async function POST({request}: APIEvent) {
     const authUrl = await client.authorize(handle, {
       scope: SCOPE,
     });
-    console.log('redirect', authUrl.toString())
+    console.log("redirect", authUrl.toString());
 
     return json({ redirectUrl: authUrl.toString() });
   } catch (error) {
     console.error("OAuth login error:", error);
     return json(
       { error: error instanceof Error ? error.message : "Login failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

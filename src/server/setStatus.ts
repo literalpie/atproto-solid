@@ -6,7 +6,7 @@ import { getSession } from "~/auth/session";
 import { statusphere } from "~/lexicons/xyz";
 
 export const setStatus = async () => {
-  const session = (await getSession());
+  const session = await getSession();
   if (!session) return;
   const client = await getOAuthClient();
   const oauthSession = await client.restore(session.did);
@@ -16,8 +16,8 @@ export const setStatus = async () => {
       createdAt: new Date().toISOString(),
       status: "B",
     });
-    return res.uri
-  } catch(e) {
-    return "error"+e.message
+    return res.uri;
+  } catch (e) {
+    return "error" + e.message;
   }
 };

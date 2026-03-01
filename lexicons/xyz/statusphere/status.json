@@ -6,10 +6,7 @@
       "type": "record",
       "record": {
         "type": "object",
-        "required": [
-          "status",
-          "createdAt"
-        ],
+        "required": ["status", "createdAt"],
         "properties": {
           "status": {
             "type": "string",

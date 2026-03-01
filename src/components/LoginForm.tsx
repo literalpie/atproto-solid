@@ -6,30 +6,25 @@ export function LoginForm() {
   const [error, setError] = createSignal<string | null>(null);
 
   async function handleSubmit(e: SubmitEvent) {
-    console.log('submit');
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      console.log('handle');
       const res = await fetch("/oauth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ handle: handle() }),
       });
-      console.log('res', !!res);
 
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.error || "Login failed");
       }
-      console.log('response gotten', data);
       // Redirect to authorization server
       window.location.href = data.redirectUrl;
     } catch (err) {
-      console.log('error!', err)
       setError(err instanceof Error ? err.message : "Login failed");
       setLoading(false);
     }
