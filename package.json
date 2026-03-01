@@ -22,7 +22,7 @@
     "@solidjs/router": "^0.15.4",
     "@solidjs/start": "2.0.0-alpha.2",
     "@types/node": "24.11.0",
-    "h3": "2.0.1-rc.4",
+    "convex": "^1.32.0",
     "nitro": "3.0.1-alpha.2",
     "oxfmt": "^0.35.0",
     "oxlint": "^1.50.0",

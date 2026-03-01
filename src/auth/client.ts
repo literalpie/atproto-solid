@@ -3,25 +3,17 @@ import {
   NodeOAuthClient,
   buildAtprotoLoopbackClientMetadata,
   requestLocalLock,
-  type NodeSavedSession,
-  type NodeSavedState,
 } from "@atproto/oauth-client-node";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../../convex/_generated/api";
 
 export const SCOPE = "atproto repo:xyz.statusphere.status";
 
-// Use globalThis to persist across hot reloads
-const globalAuth = globalThis as unknown as {
-  stateStore: Map<string, NodeSavedState>;
-  sessionStore: Map<string, NodeSavedSession>;
-};
-globalAuth.stateStore ??= new Map();
-globalAuth.sessionStore ??= new Map();
-
 let client: NodeOAuthClient | null = null;
 
-// async might not be needed?
 export async function getOAuthClient(): Promise<NodeOAuthClient> {
   if (client) return client;
+  const convex = new ConvexHttpClient(process.env.VITE_CONVEX_URL!);
 
   client = new NodeOAuthClient({
     clientMetadata: buildAtprotoLoopbackClientMetadata({
@@ -30,26 +22,31 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
     }),
     requestLock: requestLocalLock,
     stateStore: {
-      async get(key: string) {
-        return globalAuth.stateStore.get(key);
+      set: async (key, state) => {
+        await convex.mutation(api.auth.setState, { key, state });
       },
-      async set(key: string, value: NodeSavedState) {
-        globalAuth.stateStore.set(key, value);
+      get: async (key) => {
+        const result = await convex.query(api.auth.getState, { key });
+        return result ? result.state : undefined;
       },
-      async del(key: string) {
-        globalAuth.stateStore.delete(key);
+      del: async (key) => {
+        await convex.mutation(api.auth.delState, { key });
       },
     },
 
     sessionStore: {
-      async get(key: string) {
-        return globalAuth.sessionStore.get(key);
+      set: async (sub, sessionData) => {
+        await convex.mutation(api.auth.setSession, {
+          did: sub,
+          session: sessionData,
+        });
       },
-      async set(key: string, value: NodeSavedSession) {
-        globalAuth.sessionStore.set(key, value);
+      get: async (sub) => {
+        const result = await convex.query(api.auth.getSession, { did: sub });
+        return result ? result.session : undefined;
       },
-      async del(key: string) {
-        globalAuth.sessionStore.delete(key);
+      del: async (sub) => {
+        await convex.mutation(api.auth.delSession, { did: sub });
       },
     },
   });
