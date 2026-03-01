@@ -1,5 +1,5 @@
 "use server";
-import { getCookie } from "@solidjs/start/http";
+import { deleteCookie, getCookie } from "@solidjs/start/http";
 import { getOAuthClient } from "./client";
 import { type APIEvent } from "@solidjs/start/server";
 import { getRequestEvent } from "solid-js/web";
@@ -13,11 +13,18 @@ export const getSession = query(async () => {
   if (!did) return null;
 
   const client = await getOAuthClient();
-  const sess = await client.restore(did);
-  return {
-    did: sess.did,
-  };
-}, "test");
+  try {
+    const sess = await client.restore(did);
+    return {
+      did: sess.did,
+    };
+  } catch (e) {
+    console.log("error", e);
+    client.revoke(did);
+    deleteCookie(event, "did");
+    return null;
+  }
+}, "getSession");
 
 export async function getDid(event: APIEvent["nativeEvent"]): Promise<string | null> {
   if (!event) {

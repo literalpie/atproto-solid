@@ -2,7 +2,7 @@
   "name": "example-bare",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --host 127.0.0.1",
     "build": "vite build",
     "start": "vite start",
     "preview": "vite preview",
@@ -24,10 +24,10 @@
     "@types/node": "24.11.0",
     "h3": "2.0.1-rc.4",
     "nitro": "3.0.1-alpha.2",
-    "solid-js": "^1.9.5",
-    "vite": "^7.0.0",
     "oxfmt": "^0.35.0",
-    "oxlint": "^1.50.0"
+    "oxlint": "^1.50.0",
+    "solid-js": "^1.9.5",
+    "vite": "^7.0.0"
   },
   "engines": {
     "node": ">=24"

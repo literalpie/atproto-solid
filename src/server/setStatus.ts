@@ -18,6 +18,6 @@ export const setStatus = async () => {
     });
     return res.uri;
   } catch (e) {
-    return "error" + e.message;
+    return `error creating status: ${e instanceof Error ? e.message : "unknown error"}`;
   }
 };

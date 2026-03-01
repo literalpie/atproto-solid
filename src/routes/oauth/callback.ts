@@ -24,7 +24,7 @@ export async function GET(request: APIEvent) {
     const response = redirect(`${PUBLIC_URL}/`);
 
     // Set DID cookie
-    setCookie(request.nativeEvent, "did", session.did, {
+    setCookie("did", session.did, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
