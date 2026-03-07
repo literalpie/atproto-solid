@@ -1,32 +1,43 @@
-# SolidStart
+# Statushere Solid
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+A variation of the app from the [AT Proto Get Started tutorial](https://atproto.com/guides/statusphere-tutorial). This uses Solid and Convex instead of React and better-sqlite3.
 
-## Creating a project
+## Setup
+
+make sure `pnpm` is installed, and do a `pnpm install` to install other dependencies.
+
+install `go` and `tap`, which is used to listen for at proto changes
+and forward them to the webhook endpoint on this app:
 
 ```bash
-# create a new project in the current directory
-npm init solid@latest
+brew install go
+go install github.com/bluesky-social/indigo/cmd/tap
+```
 
-# create a new project in my-app
-npm init solid@latest my-app
+you need a `.env.local` file with contents like this:
+
+```bash
+# Deployment used by `npx convex dev`
+CONVEX_DEPLOYMENT=GET_FROM_CONVEX_CLI
+
+VITE_CONVEX_URL=http://127.0.0.1:3210
+
+VITE_CONVEX_SITE_URL=http://127.0.0.1:3211
+TAP_ADMIN_PASSWORD=ADD_YOUR_PASSWORD_HERE
 ```
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+You need to have 3 terminals open to run Vite, Convex, and Tap:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+$(go env GOPATH)/bin/tap run --webhook-url=http://localhost:3000/webhook --collection-filters=xyz.statusphere.status --admin-password="ADD_YOUR_PASSWORD_HERE"
 ```
 
-## Building
+```bash
+pnpm dev
+```
 
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
-
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
-
-## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)
+```bash
+pnpm convex dev
+```

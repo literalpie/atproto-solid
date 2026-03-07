@@ -11,4 +11,20 @@ export default defineSchema({
     did: v.string(),
     session: v.any(), // 'any' because it's JSON we don't know the shape of
   }).index("by_did", ["did"]),
+
+  accounts: defineTable({
+    did: v.string(),
+    handle: v.string(),
+    active: v.boolean(),
+  }).index("by_did", ["did"]),
+
+  statuses: defineTable({
+    uri: v.string(),
+    authorDid: v.string(),
+    status: v.string(),
+    createdAt: v.string(),
+    indexedAt: v.string(),
+  })
+    .index("by_uri", ["uri"]) // Fast upserts
+    .index("by_author_recent", ["authorDid", "createdAt"]), // Fast feeds
 });
