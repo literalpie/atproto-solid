@@ -9,7 +9,6 @@ export const getAccountStatus = query({
       .withIndex("by_author_recent", (q) => q.eq("authorDid", args.did))
       .order("desc")
       .collect();
-    console.log("get status", statuses);
     return statuses.sort()[0];
   },
 });
@@ -36,6 +35,29 @@ export const setStatus = mutation({
   },
 });
 
+export const getRecentStatuses = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const limit = args.limit ?? 5;
+    const statuses = await ctx.db
+      .query("statuses")
+      .withIndex("by_created_at")
+      .order("desc")
+      .take(limit);
+
+    const statusesWithAccounts = await Promise.all(
+      statuses.map(async (status) => {
+        const account = await ctx.db
+          .query("accounts")
+          .withIndex("by_did", (q) => q.eq("did", status.authorDid))
+          .unique();
+        return { ...status, account };
+      }),
+    );
+
+    return statusesWithAccounts;
+  },
+});
 export const deleteStatus = mutation({
   args: { uri: v.string() },
   handler: async (ctx, args) => {

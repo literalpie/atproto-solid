@@ -26,5 +26,6 @@ export default defineSchema({
     indexedAt: v.string(),
   })
     .index("by_uri", ["uri"]) // Fast upserts
-    .index("by_author_recent", ["authorDid", "createdAt"]), // Fast feeds
+    .index("by_author_recent", ["authorDid", "createdAt"]) // Fast feeds
+    .index("by_created_at", ["createdAt"]),
 });
