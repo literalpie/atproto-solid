@@ -49,7 +49,7 @@ export function StatusPicker(props: StatusPickerProps) {
               }
               disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {emoji} {props.status === emoji ? "(selected)" : null}
+              {emoji}
             </button>
           )}
         </For>

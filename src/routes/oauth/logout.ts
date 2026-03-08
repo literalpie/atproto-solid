@@ -5,14 +5,14 @@ import { deleteCookie, getCookie } from "@solidjs/start/http";
 
 export async function POST(request: APIEvent) {
   try {
-    const did = getCookie(request.nativeEvent, "did");
+    const did = getCookie("did");
 
     if (did) {
       const client = await getOAuthClient();
-      await client.revoke(did);
+      await client.revoke(did).catch(() => {}); // failure shouldn't prevent logout
+      deleteCookie(request.nativeEvent, "did");
     }
 
-    cookieStore.delete("did");
     return json({ success: true });
   } catch (error) {
     console.error("Logout error:", error);

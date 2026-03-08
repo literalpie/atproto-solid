@@ -31,20 +31,27 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} class="space-y-4">
       <div>
-        <label>Handle</label>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+          Handle
+        </label>
         <input
           type="text"
           value={handle()}
           onChange={(e) => setHandle(e.target.value)}
           placeholder="user.example.com"
+          class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
           disabled={loading()}
         />
       </div>
-      {error && <p>{error()}</p>}
+      {error && <p class="text-red-500 text-sm">{error()}</p>}
 
-      <button type="submit" disabled={loading() || !handle()}>
+      <button
+        type="submit"
+        disabled={loading() || !handle()}
+        class="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+      >
         {loading() ? "Signing in..." : "Sign in"}
       </button>
     </form>

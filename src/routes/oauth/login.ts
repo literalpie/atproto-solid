@@ -6,7 +6,6 @@ import { getOAuthClient, SCOPE } from "~/auth/client";
 export async function POST({ request }: APIEvent) {
   try {
     const { handle } = await request.json();
-    console.log("request", handle);
 
     if (!handle || typeof handle !== "string") {
       return json({ error: "Handle is required" }, { status: 400 });
@@ -17,7 +16,6 @@ export async function POST({ request }: APIEvent) {
     const authUrl = await client.authorize(handle, {
       scope: SCOPE,
     });
-    console.log("redirect", authUrl.toString());
 
     return json({ redirectUrl: authUrl.toString() });
   } catch (error) {
