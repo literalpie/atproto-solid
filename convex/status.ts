@@ -71,6 +71,42 @@ export const deleteStatus = mutation({
   },
 });
 
+export const getTopStatuses = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit ?? 10;
+
+    const accounts = await ctx.db
+      .query("accounts")
+      .withIndex("by_did")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+
+    const latestStatuses = await Promise.all(
+      accounts.map((account) =>
+        ctx.db
+          .query("statuses")
+          .withIndex("by_author_recent", (q) => q.eq("authorDid", account.did))
+          .order("desc")
+          .first(),
+      ),
+    );
+
+    const countMap = new Map<string, number>();
+    for (const status of latestStatuses) {
+      if (!status) continue;
+      countMap.set(status.status, (countMap.get(status.status) ?? 0) + 1);
+    }
+
+    return Array.from(countMap.entries())
+      .map(([status, count]) => ({ status, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  },
+});
+
 export const setAccount = mutation({
   args: { did: v.string(), handle: v.string(), active: v.boolean() },
   handler: async (ctx, args) => {

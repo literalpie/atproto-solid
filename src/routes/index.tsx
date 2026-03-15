@@ -15,9 +15,17 @@ const loadRecentStatuses = query(async () => {
   // fetch initial data however you want server-side
   return await convexHttpClient.query(api.status.getRecentStatuses, {});
 }, "recentStatuses");
+const loadTopStatuses = query(async () => {
+  "use server";
+  // fetch initial data however you want server-side
+  return await convexHttpClient.query(api.status.getTopStatuses, {});
+}, "topStatuses");
 
 export const route = {
-  load: () => loadRecentStatuses(),
+  load: () => {
+    loadRecentStatuses();
+    loadTopStatuses();
+  },
 };
 
 export default function Home() {
@@ -25,6 +33,9 @@ export default function Home() {
   const { status, setStatus, isPending } = createStatusStore(session);
   const initialRecentStatuses = createAsync(() => loadRecentStatuses());
   const recentStatuses = createQuery(api.status.getRecentStatuses, {}, initialRecentStatuses());
+
+  const initialTopStatuses = createAsync(() => loadTopStatuses());
+  const topStatuses = createQuery(api.status.getTopStatuses, {}, initialTopStatuses());
 
   return (
     <div class="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
@@ -54,6 +65,25 @@ export default function Home() {
               <LoginForm />
             </div>
           )}
+
+          {(topStatuses()?.length ?? 0) > 0 && (
+            <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+              <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+                Top Statuses
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                <For each={topStatuses()}>
+                  {(s) => (
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm">
+                      <span class="text-lg">{s.status}</span>
+                      <span class="text-zinc-500 dark:text-zinc-400">{String(s.count)}</span>
+                    </span>
+                  )}
+                </For>
+              </div>
+            </div>
+          )}
+
           <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
             <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">Recent</h3>
 
