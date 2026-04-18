@@ -10,16 +10,13 @@ const PUBLIC_URL = process.env.PUBLIC_URL || "http://127.0.0.1:3000";
 
 export async function GET(request: APIEvent) {
   try {
-    console.log("this is the url right?", new URL(request.request.url).searchParams);
     if (!request.nativeEvent) return undefined;
 
     const params = new URL(request.request.url).searchParams;
     const client = await getOAuthClient();
-    console.log("client", !!client);
 
     // Exchange code for session
     const { session } = await client.callback(params);
-    console.log("session", !!session);
 
     const response = redirect(`${PUBLIC_URL}/`);
 

@@ -4,7 +4,6 @@ import { revalidate } from "@solidjs/router";
 import { getSession } from "~/auth/session";
 
 export function LogoutButton() {
-  // const nav = useNavigate();
   async function handleLogout() {
     await fetch("/oauth/logout", { method: "POST" });
     revalidate(getSession.key);

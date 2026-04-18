@@ -14,7 +14,7 @@ export default function App() {
       root={(props) => (
         <ConvexContext.Provider value={convex}>
           <MetaProvider>
-            <Title>SolidStart - Basic</Title>
+            <Title>Statusphere</Title>
             <Suspense>{props.children}</Suspense>
           </MetaProvider>
         </ConvexContext.Provider>
